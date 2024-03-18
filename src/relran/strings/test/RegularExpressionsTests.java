@@ -63,6 +63,7 @@ class RegularExpressionsTests {
 	void ipOctetTest() {
 		String regex = RegularExpressions.ipOctet();
 		assertTrue("0".matches(regex));
+		assertTrue("7".matches(regex));
 		assertTrue("00".matches(regex));
 		assertTrue("000".matches(regex));
 		assertTrue("10".matches(regex));
