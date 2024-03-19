@@ -2,9 +2,11 @@ package relran.strings.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import relran.strings.RegularExpressions;
+import relran.strings.Validations;
 
 class RegularExpressionsTests {
 
@@ -108,4 +110,55 @@ class RegularExpressionsTests {
 			assertFalse("053--37-36-0--3-3".matches(regex)); //double hyphen
 	}
 	
+	@Test
+	@DisplayName("Test for IPV4 address regex")
+	void ipV4AddressTest() {
+		String ipV4Regex = RegularExpressions.ipV4Address();
+		assertTrue("1.2.3.4".matches(ipV4Regex));
+		assertFalse("1.2.3".matches(ipV4Regex));
+		assertFalse("1 2.3.4".matches(ipV4Regex));
+		assertFalse("1. 2.3.4".matches(ipV4Regex));
+		assertFalse("1.2.3.4.5".matches(ipV4Regex));
+		assertFalse("1.2.&45".matches(ipV4Regex));
+	}
+	
+	@Test
+	@DisplayName("test of simple arithmetic expression")
+	void simpleArithmeticExpressionsTest() {
+		String regex = RegularExpressions.simpleArithmeticExpression();
+		assertTrue("20".matches(regex));
+		assertTrue(" 20 +3 /2 *100".matches(regex));
+		assertTrue("1000-1".matches(regex));
+		assertTrue("1000-1 ".matches(regex));
+		assertFalse("-20".matches(regex));
+		assertFalse("20 ** 3".matches(regex));
+		assertFalse(" 20 +3 /2 *100 +".matches(regex));
+	}
+
+@Test
+@DisplayName("test arithmetic expressions with any numbers and variable name and brackes")
+	void arithmeticExpressionTest() {
+	String regex = RegularExpressions.arithmeticExpression();
+	assertTrue("(20.50 + abc)*.5".matches(regex));
+	assertTrue("(20.5 + abc12))*2".matches(regex));
+	assertTrue("(20.5 + (abc$ / 3)*(2".matches(regex));
+	assertTrue("(__)".matches(regex));
+	assertFalse("2 + _".matches(regex));
+	assertFalse("2 + a12 * ".matches(regex));
+	assertFalse("(2 + )a12 * ".matches(regex));
+	}
+
+	@Test
+	@DisplayName("testing validation function")
+	void testIsArithmeticExpression() {
+		assertTrue(Validations.isArithmeticExpression("(.34 + _e34 )*(0.2 - i ) / ( 45 - t ) "));
+		assertFalse(Validations.isArithmeticExpression("2 +() 3"));
+		assertFalse(Validations.isArithmeticExpression("(20.5 + abc12))*2"));
+		assertFalse(Validations.isArithmeticExpression("(.34 + _e34 )*( 0.2 - i ) / ( 45 - t / _) "));
+		assertFalse(Validations.isArithmeticExpression("(.34 + _e34 )*( 0.2 - i ) / ( 45 - t / 4 )) "));
+		assertFalse(Validations.isArithmeticExpression("( 20 + 3) - 1)" ));
+		assertFalse(Validations.isArithmeticExpression("( 20 + $1) - r + (1))" ));
+	}
 }
+
+
